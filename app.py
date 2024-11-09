@@ -8,7 +8,7 @@ metrics = PrometheusMetrics(app)
 
 # Configuração de logs
 logging.basicConfig(
-    filename='app.log',  # Nome do arquivo de log
+    filename='flask_app.log',  # Nome do arquivo de log
     level=logging.INFO,  # Nível de log (INFO, DEBUG, ERROR, etc.)
     format='%(asctime)s - %(levelname)s - %(message)s'  # Formato da mensagem de log
 )
