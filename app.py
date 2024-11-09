@@ -1,3 +1,4 @@
+import os
 import logging
 from flask import Flask, request, jsonify
 from prometheus_flask_exporter import PrometheusMetrics
@@ -6,16 +7,21 @@ import sqlite3
 app = Flask(__name__)
 metrics = PrometheusMetrics(app)
 
+# Criação do diretório de logs se não existir
+log_directory = 'logs'
+os.makedirs(log_directory, exist_ok=True)
+
 # Configuração de logs
+log_file_path = os.path.join(log_directory, 'flask_app.log')  # Caminho completo do arquivo de log
 logging.basicConfig(
-    filename='flask_app.log',  # Nome do arquivo de log
+    filename=log_file_path,  # Nome do arquivo de log na pasta logs
     level=logging.INFO,  # Nível de log (INFO, DEBUG, ERROR, etc.)
     format='%(asctime)s - %(levelname)s - %(message)s'  # Formato da mensagem de log
 )
 
 # Conexão com o banco de dados SQLite
 def get_db_connection():
-    conn = sqlite3.connect('alimentos.db')  # Renomeie o arquivo aqui também
+    conn = sqlite3.connect('alimentos.db')
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -70,6 +76,15 @@ def delete_alimento(categoria):
     conn.close()
     
     return ('', 204)
+
+# Tratamento de erros
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({"message": "Desculpe, a rota que você tentou acessar não foi encontrada."}), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({"message": "Ocorreu um erro interno no servidor. Tente novamente mais tarde."}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
