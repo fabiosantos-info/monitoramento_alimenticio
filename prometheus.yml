@@ -1,7 +1,10 @@
 global:
-  scrape_interval: 5s
+  scrape_interval: 15s  # Intervalo de coleta de métricas.
 
 scrape_configs:
-  - job_name: 'flask_app'
+  - job_name: 'prometheus'
     static_configs:
-      - targets: ['flask:5000']
+      - targets: ['localhost:9090']
+  - job_name: 'flask_application'
+    static_configs:
+      - targets: ['10.0.6.2:5000']
